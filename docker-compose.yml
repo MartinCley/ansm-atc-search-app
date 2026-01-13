@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  ansm-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "8090:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optionnel: Base de données si nécessaire
+  # ansm-db:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: ansm_db
+  #     POSTGRES_USER: ansm_user
+  #     POSTGRES_PASSWORD: ansm_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+# volumes:
+#   postgres_data:
